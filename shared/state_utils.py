@@ -35,4 +35,4 @@ def def_to_full(a, address_to_symbol):
     return f"[{s1}], [{s2}]"
 
 MAX_ADDRESS = 16383
-DIR_TO_INT = {"R": Direction.RIGHT, "L": Direction.LEFT}
+DIR_TO_INT = {"R": Direction.RIGHT, "L": Direction.LEFT, "-":Direction.NONE}
