@@ -1,7 +1,4 @@
-from shared.state_utils import Direction, WriteInstruction
-
-MAX_ADDRESS = 16382
-DIR_TO_INT = {"R": Direction.RIGHT, "L": Direction.LEFT, "-": None}
+from shared.state_utils import *
 
 
 # START start_read_:
@@ -61,17 +58,6 @@ def define(address_table, file):
     return states
 
 
-def addr_to_full(s):
-    return f"{address_to_symbol[s]}@{s}"
-    # return f"{s}"
-
-
-def def_to_full(a):
-    s1 = f"0 -> WRITE {a[0][0]} MOVE {a[0][1]} GOTO {addr_to_full(a[0][2])}"
-    s2 = f"1 -> WRITE {a[1][0]} MOVE {a[1][1]} GOTO {addr_to_full(a[1][2])}"
-    return f"[{s1}], [{s2}]"
-
-
 file = "../sample_inputs/example_tmd_dir.tm2"
 out = "out2.txt"
 symbol_to_address_lookup = address(file)
@@ -83,6 +69,6 @@ print("ADDR -> DESC")
 with open(out, "w") as o:
     o.write(f"states: {len(symbol_to_address_lookup)}\n")
     for (key, value) in address_to_state_def.items():
-        o.write(f"{addr_to_full(key)} -> {def_to_full(value)}\n")
+        o.write(f"{addr_to_full(key, address_to_symbol)} -> {def_to_full(value, address_to_symbol)}\n")
     o.flush()
     o.close()
