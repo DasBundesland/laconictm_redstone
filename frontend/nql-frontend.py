@@ -9,7 +9,7 @@ def address(file) -> dict:
         for line in f:
             name = line.split("=")[0].replace(" ", "")
             counter += 1
-            if counter > max:
+            if counter > MAX_ADDRESS:
                 exit(-1)
             addresses[name] = counter
             # print(f"Assigned {counter} to {name}")
