@@ -9,7 +9,6 @@ import collections
 class LaconicFrontend:
     @staticmethod
     def address(file) -> dict:
-
         print("Pass 1: Assigning addresses to states.")
         addr = 0
         addresses = dict()
@@ -21,26 +20,19 @@ class LaconicFrontend:
                     line = f.readline()
                     continue
                 elif line != "":
-                    addr = random.getrandbits(ADDRESS_BITS)
-                    ct = 0
-                    while (addr in addresses.values() or addr == 0 or addr == HALT_RESERVED) and ct <= ADDRESSING_TRIES:
-                        ct += 1
-                        addr = random.getrandbits(ADDRESS_BITS)
-                    # print(ct)
+                    addr += 1
                     name = line[:-2].replace(" ", "_")
-                    if ct >= ADDRESSING_TRIES:
-                        print(f"Failed to assign a valid address for {name}, "
-                              f"probably collides! Ensure that the number of states doesn't exceed the number of possible addresses"
-                              f" {(1 << ADDRESS_BITS) - 2}. Adjust ADDRESS_BITS accordingly.")
+                    if addr > ERROR_RESERVED or addr == HALT_RESERVED:
+                        print(f"Failed to address {name}, there are too many states!")
                     addresses[name] = addr
                     f.readline()
                     f.readline()
                 line = f.readline()
             f.close()
-        addresses["HALT"] = 0
-        addresses["ERROR"] = 1 << ADDRESS_BITS
+        addresses["HALT"] = HALT_RESERVED
+        addresses["ERROR"] = ERROR_RESERVED
         print(f"{len(addresses)}/{(1 << ADDRESS_BITS)} addresses used")
-        print(f"Reserved addresses invisible in IR: {0, HALT_RESERVED}")
+        print(f"Reserved addresses invisible in IR: {0, ERROR_RESERVED}")
         if len(set(addresses.values())) != len(addresses.values()):
             print(f"Address collision is present({len(set(addresses.values()))}/{len(addresses.values())})")
             print(
@@ -92,20 +84,15 @@ class NQLFrontend:
         with open(file, "r") as f:
             for line in f:
                 name = line.split("=")[0].replace(" ", "")
-                ct = 0
-                while (addr in addresses.values() or addr == 0 or addr == HALT_RESERVED) and ct <= ADDRESSING_TRIES:
-                    addr = random.getrandbits(ADDRESS_BITS)
-                    ct += 1
-                if ct >= ADDRESSING_TRIES:
-                    print(f"Failed to assign a valid address for {name}, "
-                          f"probably collides! Ensure that the number of states doesn't exceed the number of possible addresses"
-                          f" {(1 << ADDRESS_BITS) - 2}. Adjust ADDRESS_BITS accordingly.")
+                addr += 1
+                if addr > ERROR_RESERVED or addr == HALT_RESERVED:
+                    print(f"Failed to address {name}, there are too many states!")
                 addresses[name] = addr
                 # print(f"Assigned {counter} to {name}")
             f.close()
         addresses["HALT"] = 0
         print(f"{len(addresses)}/{(1 << ADDRESS_BITS)} addresses used")
-        print(f"Reserved addresses invisible in IR: {0, HALT_RESERVED}")
+        print(f"Reserved addresses invisible in IR: {0, ERROR_RESERVED}")
         if len(set(addresses.values())) != len(addresses.values()):
             print(f"Address collision is present({len(set(addresses.values()))}/{len(addresses.values())})")
             print(

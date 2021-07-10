@@ -12,7 +12,7 @@ class WriteInstruction(Enum):
     NOOP = 2
 
 
-class StateReference():
+class StateReference:
     symbol = ""
     address = None
 
@@ -38,6 +38,6 @@ def def_to_full(a, address_to_symbol):
 # TODO: Make these configurable by the user
 
 ADDRESS_BITS = 13
-HALT_RESERVED = (1 << ADDRESS_BITS) - 1
-ADDRESSING_TRIES = 200
+ERROR_RESERVED = (1 << ADDRESS_BITS) - 1
+HALT_RESERVED = 0
 DIR_TO_INT = {"R": Direction.RIGHT, "L": Direction.LEFT, "-": Direction.NONE}
