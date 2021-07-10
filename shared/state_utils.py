@@ -25,7 +25,7 @@ class StateReference():
 
 
 def addr_to_full(s, address_to_symbol):
-    return f"{address_to_symbol[s]}@{s}"
+    return f"{address_to_symbol[s]}@{hex(s)}"
     # return f"{s}"
 
 
@@ -34,5 +34,8 @@ def def_to_full(a, address_to_symbol):
     s2 = f"1 -> WRITE {a[1][0]} MOVE {a[1][1]} GOTO {addr_to_full(a[1][2], address_to_symbol)}"
     return f"[{s1}], [{s2}]"
 
-MAX_ADDRESS = 16383
-DIR_TO_INT = {"R": Direction.RIGHT, "L": Direction.LEFT, "-":Direction.NONE}
+
+ADDRESS_BITS = 13
+HALT_RESERVED = (1 << ADDRESS_BITS) - 1
+ADDRESSING_TRIES = 1024
+DIR_TO_INT = {"R": Direction.RIGHT, "L": Direction.LEFT, "-": Direction.NONE}
