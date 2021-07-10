@@ -1,4 +1,4 @@
-from shared.state_utils import *
+from utils import *
 import random
 import collections
 
@@ -9,6 +9,7 @@ import collections
 class LaconicFrontend:
     @staticmethod
     def address(file) -> dict:
+
         print("Pass 1: Assigning addresses to states.")
         addr = 0
         addresses = dict()

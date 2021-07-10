@@ -35,7 +35,9 @@ def def_to_full(a, address_to_symbol):
     return f"[{s1}], [{s2}]"
 
 
+# TODO: Make these configurable by the user
+
 ADDRESS_BITS = 13
 HALT_RESERVED = (1 << ADDRESS_BITS) - 1
-ADDRESSING_TRIES = 1024
+ADDRESSING_TRIES = 200
 DIR_TO_INT = {"R": Direction.RIGHT, "L": Direction.LEFT, "-": Direction.NONE}
