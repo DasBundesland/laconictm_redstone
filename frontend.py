@@ -79,7 +79,7 @@ class LaconicFrontend:
         symbol_to_address_lookup = LaconicFrontend.address(file)
         address_to_state_def = LaconicFrontend.define(symbol_to_address_lookup, file)
         address_to_symbol_lookup = {value: key for (key, value) in symbol_to_address_lookup.items()}
-        output_ir_stuff(file, out, symbol_to_address_lookup, address_to_state_def, address_to_symbol_lookup)
+        output_ir_stuff(out, address_to_state_def, address_to_symbol_lookup)
         return address_to_state_def
 
 
@@ -134,11 +134,11 @@ class NQLFrontend:
         symbol_to_address_lookup = NQLFrontend.address(file)
         address_to_state_def = NQLFrontend.define(symbol_to_address_lookup, file)
         address_to_symbol_lookup = {value: key for (key, value) in symbol_to_address_lookup.items()}
-        output_ir_stuff(file, out, symbol_to_address_lookup, address_to_state_def, address_to_symbol_lookup)
+        output_ir_stuff(out, address_to_state_def, address_to_symbol_lookup)
         return address_to_state_def
 
 
-def output_ir_stuff(file, out, symbol_to_address_lookup, address_to_state_def, address_to_symbol_lookup):
+def output_ir_stuff(out, address_to_state_def, address_to_symbol_lookup):
     if out:
         [print(
             f"{addr_to_full(v, address_to_symbol_lookup)} -> {def_to_full(address_to_state_def[v], address_to_symbol_lookup)}")
