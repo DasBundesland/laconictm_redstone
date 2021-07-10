@@ -1,5 +1,4 @@
 from utils import *
-import random
 import collections
 
 
@@ -24,6 +23,7 @@ class LaconicFrontend:
                     name = line[:-2].replace(" ", "_")
                     if addr > ERROR_RESERVED or addr == HALT_RESERVED:
                         print(f"Failed to address {name}, there are too many states!")
+                        return addresses
                     addresses[name] = addr
                     f.readline()
                     f.readline()
@@ -34,7 +34,7 @@ class LaconicFrontend:
         print(f"{len(addresses)}/{(1 << ADDRESS_BITS)} addresses used")
         print(f"Reserved addresses invisible in IR: {0, ERROR_RESERVED}")
         if len(set(addresses.values())) != len(addresses.values()):
-            print(f"Address collision is present({len(set(addresses.values()))}/{len(addresses.values())})")
+            print(f"Address collision is present ({len(set(addresses.values()))}/{len(addresses.values())})")
             print(
                 f"Colliding addresses: {[item for item, count in collections.Counter(addresses.values()).items() if count > 1]}")
         # print(addresses)
@@ -43,7 +43,7 @@ class LaconicFrontend:
     @staticmethod
     def define(address_table, file):
         print("Pass 2: Reading state definitions.")
-        states = dict()
+        states = list()
         with open(file, "r") as f:
             f.readline()
             line = f.readline()
@@ -62,8 +62,10 @@ class LaconicFrontend:
                 t2 = (WriteInstruction.NOOP if if_b[2] == "b" else WriteInstruction.INVERT
                       , DIR_TO_INT[if_b[1]]
                       , address_table[if_b[0]])
-                states[addr] = [t1, t2]
+                states.append(State(addr, t1, t2))
                 line = f.readline()
+        states.append(State(HALT_RESERVED, (WriteInstruction.NOOP, None, HALT_RESERVED), (WriteInstruction.NOOP, None, HALT_RESERVED)))
+        states.append(State(ERROR_RESERVED, (WriteInstruction.NOOP, None, ERROR_RESERVED), (WriteInstruction.NOOP, None, ERROR_RESERVED)))
         return states
 
     @staticmethod
@@ -71,7 +73,7 @@ class LaconicFrontend:
         symbol_to_address_lookup = LaconicFrontend.address(file)
         address_to_state_def = LaconicFrontend.define(symbol_to_address_lookup, file)
         address_to_symbol_lookup = {value: key for (key, value) in symbol_to_address_lookup.items()}
-        output_ir_stuff(out, address_to_state_def, address_to_symbol_lookup)
+        output_ir_stuff(out,  {a.address: [a.on0, a.on1] for a in address_to_state_def}, address_to_symbol_lookup)
         return address_to_state_def
 
 
@@ -102,17 +104,18 @@ class NQLFrontend:
     @staticmethod
     def define(address_table, file):
         print("Pass 2: Reading state definitions.")
-        states = dict()
+        states = list()
         with open(file, "r") as f:
             for line in f:
                 val = line.split("=")[1].replace("\n", "").split(" ")[1::]
                 # print(val)
-                states[address_table[line.split("=")[0].replace(" ", "")]] = [
-                    (WriteInstruction.NOOP if val[0] == "0" else WriteInstruction.INVERT, DIR_TO_INT[val[1]],
-                     address_table[val[2]]),
-                    (WriteInstruction.NOOP if val[3] == "1" else WriteInstruction.INVERT, DIR_TO_INT[val[4]],
-                     address_table[val[5]])]
-            states[0] = [(WriteInstruction.NOOP, None, 0), (WriteInstruction.NOOP, None, 0)]
+                curr = State(address_table[line.split("=")[0].replace(" ", "")],
+                             (WriteInstruction.NOOP if val[0] == "0" else WriteInstruction.INVERT, DIR_TO_INT[val[1]],
+                              address_table[val[2]]),
+                             (WriteInstruction.NOOP if val[3] == "1" else WriteInstruction.INVERT, DIR_TO_INT[val[4]],
+                              address_table[val[5]]))
+                states.append(curr)
+            states.append(State(HALT_RESERVED, (WriteInstruction.NOOP, None, HALT_RESERVED), (WriteInstruction.NOOP, None, HALT_RESERVED)))
             f.close()
         return states
 
@@ -121,7 +124,7 @@ class NQLFrontend:
         symbol_to_address_lookup = NQLFrontend.address(file)
         address_to_state_def = NQLFrontend.define(symbol_to_address_lookup, file)
         address_to_symbol_lookup = {value: key for (key, value) in symbol_to_address_lookup.items()}
-        output_ir_stuff(out, address_to_state_def, address_to_symbol_lookup)
+        output_ir_stuff(out, {a.address: [a.on0, a.on1] for a in address_to_state_def}, address_to_symbol_lookup)
         return address_to_state_def
 
 

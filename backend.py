@@ -1,17 +1,17 @@
-from shared.state_utils import *
+from utils import *
 from nbt import *
 
+
 # This will allocate the states to their bricks
-def brick_alloc(ir) -> (set, set):
+def brick_alloc(states):
     return NotImplemented
 
 
-# This will turn a state into a redstone block
-def state_to_structure(state: [(WriteInstruction, Direction, int), (WriteInstruction, Direction, int)]) \
-        -> nbt.TAG_COMPOUND:
+# This will turn a state into redstone
+def state_to_structure(state):
     return NotImplemented
 
 
 # This will write structure files
-def redstonegen(ir) -> (nbt.NBTFile, nbt.NBTFile):
+def redstonegen(states) -> (nbt.NBTFile, nbt.NBTFile):
     return NotImplemented
